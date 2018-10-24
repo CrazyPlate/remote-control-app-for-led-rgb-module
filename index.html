@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>LED RGB</title>
+      <link rel="shortcut icon" href="agh_icon.png" type="image/x-icon">
+      <link rel="stylesheet" href="style.css">
+</head>
+<body>
+      <div class="container">
+            <div class="element-container RGBvalue" id="RGBvalue">
+                  <div>
+                        R: <input class="value" id="Rvalue" type="text" size="3" readonly>
+                  </div>
+                  <div>
+                        G: <input class="value" id="Gvalue" type="text" size="3" readonly>
+                  </div>
+                  <div>
+                        B: <input class="value" id="Bvalue" type="text" size="3" readonly>
+                  </div>
+            </div>
+            <div class="element-container colorPicker">
+                  <div id="color-picker-container"></div>
+                  <div>
+                        Jasność:<input class="value" id="brightness" type="text" size="3" readonly>
+                  </div>
+            </div>
+            <div class="element-container singleColor">
+                  <div class="colorN" id="color1"></div>
+                  <div class="colorN" id="color2"></div>
+                  <div class="colorN" id="color3"></div>
+                  <div class="colorN" id="color4"></div>
+                  <div class="colorN" id="color5"></div>
+                  <div class="colorN" id="color6"></div>
+                  <div class="colorN" id="color7"></div>
+                  <div class="colorN" id="color8"></div>
+                  <div class="colorN" id="color9"></div>
+            </div>
+      </div>
+      
+      <script src="js/iro.js"></script>
+      <script src="js/arduino.js"></script>
+</body>
+</html>
