@@ -1,2 +1,3 @@
-# remote-control-app-for-led-rgb-module
-Application for remote control RGB LED lighting module.
+# Remote control application for RGB LED lighting module
+
+![Alt text](/app-view.jpg "Desktop view of app")
