@@ -9,34 +9,40 @@
       <link rel="stylesheet" href="style.css">
 </head>
 <body>
-      <div class="container">
-            <div class="element-container RGBvalue" id="RGBvalue">
-                  <div>
-                        R: <input class="value" id="Rvalue" type="text" size="3" readonly>
+      <div class="root">
+            <div class="container container-rgb">
+                  <div class="color-rgb">
+                        R:<input class="color-rgb-value" id="Rvalue" type="text" size="3" readonly>
                   </div>
-                  <div>
-                        G: <input class="value" id="Gvalue" type="text" size="3" readonly>
+                  <div class="color-rgb">
+                        G:<input class="color-rgb-value" id="Gvalue" type="text" size="3" readonly>
                   </div>
-                  <div>
-                        B: <input class="value" id="Bvalue" type="text" size="3" readonly>
+                  <div class="color-rgb">
+                        B:<input class="color-rgb-value" id="Bvalue" type="text" size="3" readonly>
                   </div>
             </div>
-            <div class="element-container colorPicker">
+            <div class="container container-bright">
+                  JASNOŚĆ<input class="value" id="brightness" type="text" size="3" readonly>
+            </div>
+            <div class="container container-picker">
                   <div id="color-picker-container"></div>
-                  <div>
-                        Jasność:<input class="value" id="brightness" type="text" size="3" readonly>
-                  </div>
             </div>
-            <div class="element-container singleColor">
-                  <div class="colorN" id="color1"></div>
-                  <div class="colorN" id="color2"></div>
-                  <div class="colorN" id="color3"></div>
-                  <div class="colorN" id="color4"></div>
-                  <div class="colorN" id="color5"></div>
-                  <div class="colorN" id="color6"></div>
-                  <div class="colorN" id="color7"></div>
-                  <div class="colorN" id="color8"></div>
-                  <div class="colorN" id="color9"></div>
+            <div class="container container-colors">
+                  <div class="color color1" id="color1"></div>
+                  <div class="color color2" id="color2"></div>
+                  <div class="color color3" id="color3"></div>
+                  <div class="color color4" id="color4"></div>
+                  <div class="color color5" id="color5"></div>
+                  <div class="color color6" id="color6"></div>
+                  <div class="color color7" id="color7"></div>
+                  <div class="color color8" id="color8"></div>
+                  <div class="color color9" id="color9"></div>
+            </div>
+            <div class="container container-scenery">
+                  SCENARIUSZE
+                  <div class="scenery scenery1" id="scenery1"></div>
+                  <div class="scenery scenery2" id="scenery2"></div>
+                  <div class="scenery scenery3" id="scenery3"></div>
             </div>
       </div>
       
