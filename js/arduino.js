@@ -43,9 +43,9 @@ const backgroundColors = [
 		id: "color6",
 		R: 255,
 		G: 0,
-		B: 255,
-		hex: '#ff00ff',
-		rgba: 'rgba(255, 0, 255, .5)'
+		B: 128,
+		hex: '#ff0080',
+		rgba: 'rgba(255, 0, 128, .5)'
 	},
 	{
 		id: "color7",
@@ -75,11 +75,9 @@ const backgroundColors = [
 
 const colorPickerContainer = document.getElementById('color-picker-container');
 
-window.addEventListener("load", function() { window.scrollTo(0, 0) });
-
 const ColorPicker = new iro.ColorPicker("#color-picker-container", {
-	width: 320,
-	height: 320,
+	width: 300,
+	height: 300,
 	color: { r: 255, g: 255, b: 225 },
 	anticlockwise: true,
 	borderWidth: 1,
@@ -87,9 +85,13 @@ const ColorPicker = new iro.ColorPicker("#color-picker-container", {
 });
 
 ColorPicker.on("color:change", function (color) {
+	console.log(color.hsv.v);
+
 	const R = color.rgb.r;
 	const G = color.rgb.g;
 	const B = color.rgb.b;
+
+	changeColorOfText(R, G, B);
 
 	const colorRGBA = 'rgba(' + R + ',' + G + ',' + B + ', .5)';
 	const colorRGB = 'rgb(' + R + ',' + G + ',' + B + ')';
@@ -105,46 +107,75 @@ ColorPicker.on("color:change", function (color) {
 
 	document.querySelector('body').style.backgroundColor = colorRGBA;
 });
-
-colorPickerContainer.addEventListener('click', addEventListenerToElement, false);
-colorPickerContainer.addEventListener('touchstart', addEventListenerToElement, false);
-colorPickerContainer.addEventListener('touchend', addEventListenerToElement, false);
-
 getDataFromArduino();
 setBackgroundForDivs();
 
-function addEventListenerToElement(ev) {
+colorPickerContainer.addEventListener('click', eventListenerForColorPicker, false);
+colorPickerContainer.addEventListener('touchstart', eventListenerForColorPicker, false);
+colorPickerContainer.addEventListener('touchend', eventListenerForColorPicker, false);
+
+document.getElementById('scenery1').addEventListener('click', function() {
+	sendStageToArduino( 66 );
+}, false);
+document.getElementById('scenery2').addEventListener('click', function() {
+	sendStageToArduino( 67 );
+}, false);
+document.getElementById('scenery3').addEventListener('click', function() {
+	sendStageToArduino( 68 );
+}, false);
+
+
+
+for (let i = 1; i < 10; i++) {
+	setBackground('color' + i);
+
+	document.getElementById('color' + i).addEventListener('click', function () {
+		sendRGBColor('color' + i);
+	})
+}
+function changeColorOfText(R, G, B) {
+	const containers = document.querySelectorAll('.container');
+	if ( Math.max(R, G, B) < 100 ) {
+		document.getElementById("Rvalue").style.color = '#fff';
+		document.getElementById("Gvalue").style.color = '#fff';
+		document.getElementById("Bvalue").style.color = '#fff';
+		document.getElementById("brightness").style.color = '#fff';
+		containers.forEach(container => {
+			container.style.color = '#fff';
+		});
+	} else if ( ( Math.max(R, G, B) > 100 ) ) {
+		document.getElementById("Rvalue").style.color = '#000';
+		document.getElementById("Gvalue").style.color = '#000';
+		document.getElementById("Bvalue").style.color = '#000';
+		document.getElementById("brightness").style.color = '#000';
+		containers.forEach(container => {
+			container.style.color = '#000';
+		});
+	}
+}
+function eventListenerForColorPicker(ev) {
 	ev.preventDefault();
 
 	var R = document.getElementById("Rvalue").value;
 	var G = document.getElementById("Gvalue").value;
 	var B = document.getElementById("Bvalue").value;
 
-	sendToArduino(R, G, B);
-}
-for (let i = 1; i < 10; i++) {
-	setBackground('color' + i);
-
-	document.getElementById('color' + i).addEventListener('click', function () {
-		sendColor('color' + i);
-	})
+	sendRGBToArduino(R, G, B);
 }
 function setBackgroundForDivs() {
 	for (let i = 1; i < 10; i++) {
 		setBackground('color' + i);
 	
 		document.getElementById('color' + i).addEventListener('click', function () {
-			sendColor('color' + i);
+			sendRGBColor('color' + i);
 		})
 	}
 }
-
 function setBackground(id) {
 	const number = id.substring(5, 6);
 	document.getElementById(id).style.backgroundColor = backgroundColors[number - 1].hex;
 }
-
-function sendColor(id) {
+function sendRGBColor(id) {
 	const number = id.substring(5, 6);
 
 	document.querySelector('body').style.backgroundColor = backgroundColors[number - 1].rgba;
@@ -161,10 +192,11 @@ function sendColor(id) {
 	document.getElementById("Gvalue").value = G;
 	document.getElementById("Bvalue").value = B;
 
-	sendToArduino(R, G, B);
+	sendRGBToArduino(R, G, B);
 }
-
-function sendToArduino(R, G, B) {
+function sendRGBToArduino(R, G, B) {
+	const type = "0";
+	const otype = String.fromCharCode(type / 2);
 	const outputR = String.fromCharCode(R / 2);
 	const outputG = String.fromCharCode(G / 2);
 	const outputB = String.fromCharCode(B / 2);
@@ -173,9 +205,19 @@ function sendToArduino(R, G, B) {
 
 	XHR.open("POST", "http://192.168.1.177/", true); //192.168.1.177
 	XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	XHR.send("^" + outputR + outputG + outputB);
+	XHR.send("^" + otype + outputR + outputG + outputB);
 }
+function sendStageToArduino( scenery ) {
 
+	const oType = String.fromCharCode(65);
+	const oScenery = String.fromCharCode(scenery);
+
+	const XHR = new XMLHttpRequest();
+
+	XHR.open("POST", "http://192.168.1.177/", true); //192.168.1.177
+	XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	XHR.send("^" + oType + oScenery);
+}
 function getDataFromArduino() {
 	const req = new XMLHttpRequest();
 
