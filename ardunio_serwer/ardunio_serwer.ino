@@ -58,7 +58,7 @@ void loop()
   if (client)
   {
     boolean currentLineIsBlank = false;
-    Serial.write(client.read());
+    //Serial.write(client.read());
     while (client.connected())
     {
       if (client.available())
@@ -82,30 +82,15 @@ void loop()
               int scenery = client.read();
               if (scenery == 66)
               {
-                rgbColour[0] = 255;
-                rgbColour[1] = 0;
-                rgbColour[2] = 0;
-                for (int decColour = 0; decColour < 3; decColour++)
-                {
-                  int incColour = decColour == 2 ? 0 : decColour + 1;
-                  for (int i = 0; i < 255; i++)
-                  {
-                    rgbColour[decColour]--;
-                    rgbColour[incColour]++;
-                    setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
-                    delay(50);
-                  }
-                }
+                rainbowScenery();
               }
               else if (scenery == 67)
               {
-                setColourRgb(255, 0, 0);
-                delay(3000);
+                hotScenery();
               }
               else if (scenery == 68)
               {
-                setColourRgb(0, 255, 0);
-                delay(3000);
+                coldScenery();
               }
               client.stop();
             }
@@ -132,6 +117,67 @@ void loop()
           currentLineIsBlank = false;
         }
       }
+    }
+  }
+}
+void rainbowScenery()
+{
+  rgbColour[0] = 255;
+  rgbColour[1] = 0;
+  rgbColour[2] = 0;
+  for (int decColour = 0; decColour < 3; decColour++)
+  {
+    int incColour = decColour == 2 ? 0 : decColour + 1;
+    for (int i = 0; i < 255; i++)
+    {
+      rgbColour[decColour]--;
+      rgbColour[incColour]++;
+      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+      delay(50);
+    }
+  }
+}
+void hotScenery()
+{
+  rgbColour[0] = 255;
+  rgbColour[1] = 0;
+  rgbColour[2] = 0;
+  for (int i = 0; i < 255; i++)
+  {
+    rgbColour[1]++;
+    setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+    delay(30);
+  }
+  rgbColour[0] = 255;
+  rgbColour[1] = 255;
+  rgbColour[2] = 0;
+  for (int i = 0; i < 255; i++)
+  {
+    rgbColour[1]--;
+    setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+    delay(30);
+  }
+}
+void coldScenery()
+{
+  rgbColour[0] = 0;
+  rgbColour[1] = 0;
+  rgbColour[2] = 255;
+  setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+  for (int incColour = 1; incColour < 3; incColour++)
+  {
+    int decColour = incColour == 1 ? 2 : 1;
+    for (int i = 0; i < 255; i++)
+    {
+      rgbColour[incColour]++;
+      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+      delay(20);
+    }
+    for (int i = 0; i < 255; i++)
+    {
+      rgbColour[decColour]--;
+      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+      delay(30);
     }
   }
 }
