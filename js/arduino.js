@@ -78,23 +78,21 @@ const colorPickerContainer = document.getElementById('color-picker-container');
 const ColorPicker = new iro.ColorPicker("#color-picker-container", {
 	width: 300,
 	height: 300,
-	color: { r: 255, g: 255, b: 225 },
+	color: { r: 255, g: 0, b: 0 },
 	anticlockwise: true,
 	borderWidth: 1,
 	borderColor: "#000"
 });
 
 ColorPicker.on("color:change", function (color) {
-	console.log(color.hsv.v);
-
 	const R = color.rgb.r;
 	const G = color.rgb.g;
 	const B = color.rgb.b;
 
 	changeColorOfText(R, G, B);
 
-	const colorRGBA = 'rgba(' + R + ',' + G + ',' + B + ', .5)';
-	const colorRGB = 'rgb(' + R + ',' + G + ',' + B + ')';
+	const colorRGBA = `rgba(${R}, ${G}, ${B}, .5)`;
+	const colorRGB = `rgb(${R}, ${G}, ${B})`;
 
 	document.getElementById("Rvalue").value = R;
 	document.getElementById("Gvalue").value = G;
@@ -114,28 +112,19 @@ colorPickerContainer.addEventListener('click', eventListenerForColorPicker, fals
 colorPickerContainer.addEventListener('touchstart', eventListenerForColorPicker, false);
 colorPickerContainer.addEventListener('touchend', eventListenerForColorPicker, false);
 
-document.getElementById('scenery1').addEventListener('click', function() {
-	sendStageToArduino( 66 );
+document.getElementById('scenery1').addEventListener('click', function () {
+	sendStageToArduino(66);
 }, false);
-document.getElementById('scenery2').addEventListener('click', function() {
-	sendStageToArduino( 67 );
+document.getElementById('scenery2').addEventListener('click', function () {
+	sendStageToArduino(67);
 }, false);
-document.getElementById('scenery3').addEventListener('click', function() {
-	sendStageToArduino( 68 );
+document.getElementById('scenery3').addEventListener('click', function () {
+	sendStageToArduino(68);
 }, false);
 
-
-
-for (let i = 1; i < 10; i++) {
-	setBackground('color' + i);
-
-	document.getElementById('color' + i).addEventListener('click', function () {
-		sendRGBColor('color' + i);
-	})
-}
 function changeColorOfText(R, G, B) {
 	const containers = document.querySelectorAll('.container');
-	if ( Math.max(R, G, B) < 100 ) {
+	if (Math.max(R, G, B) < 100) {
 		document.getElementById("Rvalue").style.color = '#fff';
 		document.getElementById("Gvalue").style.color = '#fff';
 		document.getElementById("Bvalue").style.color = '#fff';
@@ -143,7 +132,7 @@ function changeColorOfText(R, G, B) {
 		containers.forEach(container => {
 			container.style.color = '#fff';
 		});
-	} else if ( ( Math.max(R, G, B) > 100 ) ) {
+	} else if ((Math.max(R, G, B) > 100)) {
 		document.getElementById("Rvalue").style.color = '#000';
 		document.getElementById("Gvalue").style.color = '#000';
 		document.getElementById("Bvalue").style.color = '#000';
@@ -165,7 +154,7 @@ function eventListenerForColorPicker(ev) {
 function setBackgroundForDivs() {
 	for (let i = 1; i < 10; i++) {
 		setBackground('color' + i);
-	
+
 		document.getElementById('color' + i).addEventListener('click', function () {
 			sendRGBColor('color' + i);
 		})
@@ -201,37 +190,35 @@ function sendRGBToArduino(R, G, B) {
 	const outputG = String.fromCharCode(G / 2);
 	const outputB = String.fromCharCode(B / 2);
 
-	const XHR = new XMLHttpRequest();
-
-	XHR.open("POST", "http://192.168.1.177/", true); //192.168.1.177
-	XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	XHR.send("^" + otype + outputR + outputG + outputB);
+	fetch('http://192.168.1.177/', {
+		method: 'POST',
+		body: "^" + otype + outputR + outputG + outputB,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	}).then(res => res.text())
+		.catch(error => console.error('Error:', error));
 }
-function sendStageToArduino( scenery ) {
+function sendStageToArduino(scenery) {
 
 	const oType = String.fromCharCode(65);
 	const oScenery = String.fromCharCode(scenery);
 
-	const XHR = new XMLHttpRequest();
-
-	XHR.open("POST", "http://192.168.1.177/", true); //192.168.1.177
-	XHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	XHR.send("^" + oType + oScenery);
+	fetch('http://192.168.1.177/', {
+		method: 'POST',
+		body: "^" + oType + oScenery,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	}).then(res => res.text())
+		.catch(error => console.error('Error:', error));
 }
 function getDataFromArduino() {
-	const req = new XMLHttpRequest();
+	fetch('http://192.168.1.177', {
+		method: 'GET'
+	})
+		.then(res => document.getElementById("brightness").value = res.headers.get("content-type") + "%")
+		.catch(error => console.error('Error:', error));
 
-	req.open('GET', 'http://192.168.1.177/', true);
-	req.send(null);
-	req.onreadystatechange = function () {
-		if (req.readyState == 4) {
-			if (req.status == 200) {
-				var response = req.getResponseHeader("Content-Type");
-				document.getElementById("brightness").value = response + "%";
-			} else {
-				console.log("Błąd podczas ładowania strony\n");
-			}
-		}
-	}
 	setTimeout('getDataFromArduino()', 500);
 }
