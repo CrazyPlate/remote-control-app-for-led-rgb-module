@@ -11,18 +11,38 @@
 <body>
       <div class="root">
             <div class="container container-rgb">
-                  <div class="color-rgb">
-                        R:<input class="color-rgb-value" id="Rvalue" type="text" size="3" readonly>
+                  <div>
+                        <div class="color-rgb">
+                              <h2>R </h2>
+                              <input class="color-rgb-value" id="Rvalue" type="text" readonly>
+                        </div>
+                        <div class="color-rgb">
+                              <h2>G </h2>
+                              <input class="color-rgb-value" id="Gvalue" type="text" readonly>
+                        </div>
+                        <div class="color-rgb">
+                              <h2>B </h2>
+                              <input class="color-rgb-value" id="Bvalue" type="text" readonly>
+                        </div>
                   </div>
-                  <div class="color-rgb">
-                        G:<input class="color-rgb-value" id="Gvalue" type="text" size="3" readonly>
-                  </div>
-                  <div class="color-rgb">
-                        B:<input class="color-rgb-value" id="Bvalue" type="text" size="3" readonly>
+                  <div>
+                        <div class="color-rgb">
+                              <h2>H </h2>
+                              <input class="color-rgb-value" id="Hvalue" type="text" readonly>
+                        </div>
+                        <div class="color-rgb">
+                              <h2>S </h2>
+                              <input class="color-rgb-value" id="Svalue" type="text" readonly>
+                        </div>
+                        <div class="color-rgb">
+                              <h2>V </h2>
+                              <input class="color-rgb-value" id="Vvalue" type="text" readonly>
+                        </div>
                   </div>
             </div>
             <div class="container container-bright">
-                  JASNOŚĆ<input class="value" id="brightness" type="text" size="3" readonly>
+                  <h2>JASNOŚĆ</h2>
+                  <input class="value" id="brightness" type="text" size="3" readonly>
             </div>
             <div class="container container-picker">
                   <div id="color-picker-container"></div>
@@ -39,10 +59,12 @@
                   <div class="color color9" id="color9"></div>
             </div>
             <div class="container container-scenery">
-                  SCENARIUSZE
+                  <h2>SCENARIUSZE</h2>
                   <div class="scenery scenery1" id="scenery1"></div>
                   <div class="scenery scenery2" id="scenery2"></div>
                   <div class="scenery scenery3" id="scenery3"></div>
+                  <h2>Ilość obiegów pętli </h2>
+                  <input type="number" id="quantityLoops" class="quantityLoops" min="1" max="99" value="1"/>
             </div>
       </div>
       

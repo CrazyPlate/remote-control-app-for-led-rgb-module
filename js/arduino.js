@@ -71,7 +71,9 @@ const backgroundColors = [
 		hex: '#0000ff',
 		rgba: 'rgba(0, 0, 255, .5)'
 	}
-]
+];
+
+const ipAdress = 'http://192.168.0.177/';
 
 const colorPickerContainer = document.getElementById('color-picker-container');
 
@@ -89,6 +91,10 @@ ColorPicker.on("color:change", function (color) {
 	const G = color.rgb.g;
 	const B = color.rgb.b;
 
+	const H = color.hsv.h;
+	const S = color.hsv.s;
+	const V = color.hsv.v;
+
 	changeColorOfText(R, G, B);
 
 	const colorRGBA = `rgba(${R}, ${G}, ${B}, .5)`;
@@ -98,6 +104,10 @@ ColorPicker.on("color:change", function (color) {
 	document.getElementById("Gvalue").value = G;
 	document.getElementById("Bvalue").value = B;
 
+	document.getElementById("Hvalue").value = H;
+	document.getElementById("Svalue").value = S;
+	document.getElementById("Vvalue").value = V;
+
 	const inputs = document.getElementsByTagName('input');
 	for (let i = 0; i < inputs.length; i++) {
 		inputs[i].style.background = colorRGB;
@@ -105,6 +115,7 @@ ColorPicker.on("color:change", function (color) {
 
 	document.querySelector('body').style.backgroundColor = colorRGBA;
 });
+//document.getElementById("brightness").value = "52%";
 getDataFromArduino();
 setBackgroundForDivs();
 
@@ -177,12 +188,54 @@ function sendRGBColor(id) {
 	const G = backgroundColors[number - 1].G;
 	const B = backgroundColors[number - 1].B;
 
+	[H, S, V] = rgb2Hsv(R, G, B);
+
 	document.getElementById("Rvalue").value = R;
 	document.getElementById("Gvalue").value = G;
 	document.getElementById("Bvalue").value = B;
 
+	document.getElementById("Hvalue").value = H;
+	document.getElementById("Svalue").value = S;
+	document.getElementById("Vvalue").value = V;
+
 	sendRGBToArduino(R, G, B);
 }
+function rgb2Hsv(rr, gg, bb) {
+	const r = rr / 255;
+	const g = gg / 255;
+	const b = bb / 255;
+
+	const	max = Math.max(r, g, b);
+	const	min = Math.min(r, g, b);
+	const	delta = max - min;
+	let	hue;
+
+	switch (max) {
+		case min:
+			hue = 0;
+			break;
+
+		case r:
+			hue = (g - b) / delta + (g < b ? 6 : 0);
+			break;
+
+		case g:
+			hue = (b - r) / delta + 2;
+			break;
+
+		case b:
+			hue = (r - g) / delta + 4;
+			break;
+	}
+
+	hue /= 6;
+
+	const h = Math.round(hue * 360);
+	const s = Math.round(max == 0 ? 0 : delta / max * 100);
+	const v = Math.round(max * 100);
+
+	return [h, s, v];
+};
 function sendRGBToArduino(R, G, B) {
 	const type = "0";
 	const otype = String.fromCharCode(type / 2);
@@ -190,7 +243,7 @@ function sendRGBToArduino(R, G, B) {
 	const outputG = String.fromCharCode(G / 2);
 	const outputB = String.fromCharCode(B / 2);
 
-	fetch('http://192.168.1.177/', {
+	fetch(ipAdress, {
 		method: 'POST',
 		body: "^" + otype + outputR + outputG + outputB,
 		headers: {
@@ -200,13 +253,17 @@ function sendRGBToArduino(R, G, B) {
 		.catch(error => console.error('Error:', error));
 }
 function sendStageToArduino(scenery) {
-
+	const quantityLoops = document.getElementById("quantityLoops").value;
+	const decimal = Math.floor(quantityLoops / 10);
+	const unity = quantityLoops % 10;
 	const oType = String.fromCharCode(65);
 	const oScenery = String.fromCharCode(scenery);
-
-	fetch('http://192.168.1.177/', {
+	
+console.log(decimal);
+console.log(unity);
+	fetch(ipAdress, {
 		method: 'POST',
-		body: "^" + oType + oScenery,
+		body: "^" + oType + decimal + unity + oScenery,
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -214,7 +271,7 @@ function sendStageToArduino(scenery) {
 		.catch(error => console.error('Error:', error));
 }
 function getDataFromArduino() {
-	fetch('http://192.168.1.177', {
+	fetch(ipAdress, {
 		method: 'GET'
 	})
 		.then(res => document.getElementById("brightness").value = res.headers.get("content-type") + "%")

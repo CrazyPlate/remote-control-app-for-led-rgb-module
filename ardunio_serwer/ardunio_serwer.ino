@@ -7,12 +7,12 @@ const int lightSensor = A0;
 int valueRGB[] = {255, 0, 0};
 int lightValue = 0;
 int postValue = 0;
-unsigned int rgbColour[3];
+unsigned int rgbColor[3];
 
 const int prefixValue = 0x5e; //^
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED}; // 222.173.190.239.254.237
-IPAddress ip(192, 168, 1, 177); //192.168.1.177
+IPAddress ip(192, 168, 0, 177); //192.168.1.177
 EthernetServer server(80);
 
 void setup()
@@ -54,13 +54,29 @@ void loop()
             int otype = client.read();
             if (otype == 65)
             {
+              int decimal = client.read() - 48;
+              int unity = client.read() - 48;
+              Serial.print("Decimal: ");
+              Serial.println(decimal);
+              Serial.print("Unity: ");
+              Serial.println(unity);
+              int quantityLoops = 10 * decimal + unity;
               int scenery = client.read();
-              if (scenery == 66)
-                rainbowScenery();
-              else if (scenery == 67)
-                hotScenery();
-              else if (scenery == 68)
-                coldScenery();
+              if (scenery == 66) {
+                for (int i = 0; i < quantityLoops; i++) {
+                  rainbowScenery();
+                }
+              }
+              else if (scenery == 67) {
+                for (int i = 0; i < quantityLoops; i++) {
+                  hotScenery();
+                }
+              }
+              else if (scenery == 68) {
+                for (int i = 0; i < quantityLoops; i++) {
+                  coldScenery();
+                }
+              }
               client.stop();
             }
             else
@@ -92,61 +108,61 @@ void sendValueToClient(EthernetClient client, int postValue)
 }
 void rainbowScenery()
 {
-  rgbColour[0] = 255;
-  rgbColour[1] = 0;
-  rgbColour[2] = 0;
-  for (int decColour = 0; decColour < 3; decColour++)
+  rgbColor[0] = 255;
+  rgbColor[1] = 0;
+  rgbColor[2] = 0;
+  for (int decColor = 0; decColor < 3; decColor++)
   {
-    int incColour = decColour == 2 ? 0 : decColour + 1;
+    int incColor = decColor == 2 ? 0 : decColor + 1;
     for (int i = 0; i < 255; i++)
     {
-      rgbColour[decColour]--;
-      rgbColour[incColour]++;
-      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
-      delay(50);
+      rgbColor[decColor]--;
+      rgbColor[incColor]++;
+      setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
+      delay(10);
     }
   }
 }
 void hotScenery()
 {
-  rgbColour[0] = 255;
-  rgbColour[1] = 0;
-  rgbColour[2] = 0;
+  rgbColor[0] = 255;
+  rgbColor[1] = 0;
+  rgbColor[2] = 0;
   for (int i = 0; i < 255; i++)
   {
-    rgbColour[1]++;
-    setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
-    delay(30);
+    rgbColor[1]++;
+    setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
+    delay(10);
   }
-  rgbColour[0] = 255;
-  rgbColour[1] = 255;
-  rgbColour[2] = 0;
+  rgbColor[0] = 255;
+  rgbColor[1] = 255;
+  rgbColor[2] = 0;
   for (int i = 0; i < 255; i++)
   {
-    rgbColour[1]--;
-    setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
-    delay(30);
+    rgbColor[1]--;
+    setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
+    delay(10);
   }
 }
 void coldScenery()
 {
-  rgbColour[0] = 0;
-  rgbColour[1] = 0;
-  rgbColour[2] = 255;
-  setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
-  for (int incColour = 1; incColour < 3; incColour++)
+  rgbColor[0] = 0;
+  rgbColor[1] = 0;
+  rgbColor[2] = 255;
+  setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
+  for (int incColor = 1; incColor < 3; incColor++)
   {
-    int decColour = incColour == 1 ? 2 : 1;
+    int decColor = incColor == 1 ? 2 : 1;
     for (int i = 0; i < 255; i++)
     {
-      rgbColour[incColour]++;
-      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+      rgbColor[incColor]++;
+      setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
       delay(20);
     }
     for (int i = 0; i < 255; i++)
     {
-      rgbColour[decColour]--;
-      setColourRgb(rgbColour[0], rgbColour[1], rgbColour[2]);
+      rgbColor[decColor]--;
+      setColourRgb(rgbColor[0], rgbColor[1], rgbColor[2]);
       delay(30);
     }
   }
@@ -157,3 +173,6 @@ void setColourRgb(unsigned int red, unsigned int green, unsigned int blue)
   analogWrite(pinsRGB[1], green);
   analogWrite(pinsRGB[2], blue);
 }
+
+
+
